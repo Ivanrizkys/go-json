@@ -21,6 +21,12 @@ func TestEncode(t *testing.T) {
 	logEncode([]string{"Hai", "Sayang"}) // ["Hai","Sayang"]
 }
 
+type family struct {
+	Anak           string
+	Istri          string
+	JumlahKeluarga int
+}
+
 type Person struct {
 	// ** agar hasil key dari json yang sudah di encode tidak huruf besar
 	Nama string `json:"nama"`
@@ -28,6 +34,7 @@ type Person struct {
 	Status string
 	Age    int
 	Maried bool
+	Family []family
 }
 
 func TestStructObject(t *testing.T) {
@@ -55,4 +62,41 @@ func TestDecode(t *testing.T) {
 
 	fmt.Println(person)
 	fmt.Println(person.Nama)
+}
+
+func TestJsonFromSlice(t *testing.T) {
+	orang1 := Person{
+		Nama:   "Ivan Rizky Saputra",
+		Status: "Kepala Keluarga",
+		Age:    20,
+		Maried: true,
+		Family: []family{
+			{
+				Anak:           "Sabila",
+				Istri:          "Fera Anissa",
+				JumlahKeluarga: 3,
+			},
+			{
+				Anak:           "Rifki Adi",
+				Istri:          "Yolanda Putri",
+				JumlahKeluarga: 3,
+			},
+		},
+	}
+	bytes, _ := json.Marshal(orang1)
+	fmt.Println(string(bytes))
+}
+
+func TestJsonToSlice(t *testing.T) {
+	arrObj := `{"nama":"Ivan Rizky Saputra","Status":"Kepala Keluarga","Age":20,"Maried":true,"Family":[{"Anak":"Sabila","Istri":"Fera Anissa","JumlahKeluarga":3},{"Anak":"Rifki Adi","Istri":"Yolanda Putri","JumlahKeluarga":3}]}`
+	dataBytes := []byte(arrObj)
+	data := Person{}
+	err := json.Unmarshal(dataBytes, &data)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(data)
+	fmt.Println(data.Nama)
+	fmt.Println(data.Family)
+	fmt.Println(data.Family[0])
 }

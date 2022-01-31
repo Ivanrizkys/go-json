@@ -62,3 +62,70 @@ func TestStructObject(t *testing.T) {
 	fmt.Println(string(bytes)) // {"nama":"Ivan Rizky Saputra","Status":"Kuliah","Age":19,"Maried":false}
 ```
 
+# Array of Object
+
+Selain dalam bentuk object, kita bisa juga mebbuat json array of object yang mana array itu akan kita buat menggunakan tipe data slice yang ada di golang.
+
+Pertama kita mempunyai stuct seperti di bawah ini:
+
+```go
+type family struct {
+	Anak           string
+	Istri          string
+	JumlahKeluarga int
+}
+
+type Person struct {
+	// ** agar hasil key dari json yang sudah di encode tidak huruf besar
+	Nama string `json:"nama"`
+	// ** hasil key dari jsson encode huruf besar
+	Status string
+	Age    int
+	Maried bool
+	Family []family
+}
+```
+
+Untuk menggenerate json atau mendecode json yang memiliki struktur seperti pada struct di atas bisa menggunakan cara seperti di bawah ini: 
+
+```go
+// generate json
+func TestJsonFromSlice(t *testing.T) {
+	orang1 := Person{
+		Nama:   "Ivan Rizky Saputra",
+		Status: "Kepala Keluarga",
+		Age:    20,
+		Maried: true,
+		Family: []family{
+			{
+				Anak:           "Sabila",
+				Istri:          "Fera Anissa",
+				JumlahKeluarga: 3,
+			},
+			{
+				Anak:           "Rifki Adi",
+				Istri:          "Yolanda Putri",
+				JumlahKeluarga: 3,
+			},
+		},
+	}
+	bytes, _ := json.Marshal(orang1)
+	fmt.Println(string(bytes))
+}
+
+// decode json
+func TestJsonToSlice(t *testing.T) {
+	arrObj := `{"nama":"Ivan Rizky Saputra","Status":"Kepala Keluarga","Age":20,"Maried":true,"Family":[{"Anak":"Sabila","Istri":"Fera Anissa","JumlahKeluarga":3},{"Anak":"Rifki Adi","Istri":"Yolanda Putri","JumlahKeluarga":3}]}`
+	dataBytes := []byte(arrObj)
+	data := Person{}
+	err := json.Unmarshal(dataBytes, &data)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(data)
+	fmt.Println(data.Nama)
+	fmt.Println(data.Family)
+	fmt.Println(data.Family[0])
+}
+
+```
